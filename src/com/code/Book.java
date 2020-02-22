@@ -1,8 +1,8 @@
 package com.code;
 
 public class Book implements Comparable<Book>{
-    public int id;
-    public int score;
+    public Integer id;
+    public Integer score;
 
     @Override
     public boolean equals(Object obj) {
@@ -24,6 +24,6 @@ public class Book implements Comparable<Book>{
 
     @Override
     public int compareTo(Book o) {
-        return this.score - ((Book) o).score;
+        return ((Book) o).score -this.score ;
     }
 }

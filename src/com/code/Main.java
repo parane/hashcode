@@ -9,14 +9,15 @@ public class Main {
     static Integer noLib=0;
     static Integer noBook=0;
     static Integer noDays=0;
-    static List<Integer> score= new ArrayList<>();
+    static List<Integer> scores= new ArrayList<>();
     static List<Library> libraries= new ArrayList<>();
     static List<Library> selectedLib=new ArrayList<>();
 
+    public static int OPTIMISE_PARAM=1000;
     static List<Library> finalSelectedLib=new ArrayList<>();
     static int maxScore=0;
-    public static String fileName= "read_on"; //"example"; "read_on"; "c_incunabula" "e_so_many_books"; "d_tough_choices"; "f_libraries_of_the_world"
-    public static void main(String[] args) throws IOException {
+    public static String fileName= "d_tough_choices"; //"a_example"; "b_read_on"; "c_incunabula" "e_so_many_books"; "d_tough_choices" ,,,; "f_libraries_of_the_world"
+    public static void main(String[] args) throws IOException, CloneNotSupportedException {
         input();
         calculate();
         output();
@@ -24,39 +25,43 @@ public class Main {
     public static void output() throws IOException {
         PrintWriter out = new PrintWriter(new FileWriter(fileName+"_"+maxScore+".txt"));
         out.println(finalSelectedLib.size());
+        Set<Integer> sets=new HashSet<>();
         for(Library lib:finalSelectedLib){
-           /* if(lib.scannedBooks.size()==0){
-                continue;
-            }*/
             out.println(lib.id+" "+lib.scannedBooks.size());
             for(Book bk:lib.scannedBooks){
+                sets.add(bk.id);
                out.print(bk.id+" ");
             }
+
             out.println();
         }
-
+        System.out.println(maxScore);
         out.close();
     }
 
-    public static void calculate(){
-        //lib order 1
-        Set<Book> globalScan= new HashSet<>();
-        int globalScore=0;
+    public static void calculate() throws CloneNotSupportedException {
 
+        int globalLibScore=0;
         int remainLibDays=noDays;
 
-        //System.out.println("****************"+libraries.size());
-
-       // List<List<Library>> perm=  getAllPermuationLib(libraries ); e-g: 100*99*
-        for(int m=0;m<2000;m++) {
-            globalScan= new HashSet<>();
+        //Todo : need to optimise library order
+        for(int m=0;m< OPTIMISE_PARAM;m++) {
             selectedLib=new ArrayList<>();
-            globalScore=0;
+            globalLibScore=0;
             remainLibDays=noDays;
 
-            List<Library> shuffleLibs= new ArrayList<>(libraries);
-            Collections.shuffle(shuffleLibs);
-            for (Library lib : shuffleLibs) {
+
+            if(m==0){
+                Collections.sort(libraries);
+            }else{
+                Collections.shuffle(libraries);
+            }
+
+            Set<Integer> scannedReady=new HashSet<>();
+
+            for (int z=0;z<libraries.size();z++) {
+                Library lib= libraries.get(z);
+
 
                 lib.scannedBooks=new ArrayList<>();
                 lib.score=0;
@@ -64,41 +69,52 @@ public class Main {
                 if (remainLibDays > lib.signDay) {
 
                     remainLibDays = remainLibDays - lib.signDay;
-                    int remainbookDays = remainLibDays;
-                    int totalbookAcc = remainbookDays * lib.scanDay;
+                    int totalbookAcc = remainLibDays * lib.scanDay;
                     for (int i = 0, k = 0; i < totalbookAcc && k < lib.noOfBook; k++) {
                         Book book = lib.books.get(k);
-                        if (globalScan.contains(book)) {
+                        if (scannedReady.contains(book.id)) {
                             continue;
                         }
                         lib.scannedBooks.add(book);
                         lib.score += book.score;
-                        globalScore += book.score;
-                        globalScan.add(book);
+                        scannedReady.add(book.id);
                         i++;
                     }
-                    if(lib.scannedBooks.size()!=0){
+                    if(lib.scannedBooks.size()>0){
                         selectedLib.add(lib);
+                    }else {
+                        remainLibDays=remainLibDays+lib.signDay;
                     }
 
                 } else {
                     break;
                 }
 
-                if(maxScore<globalScore){
-                    maxScore=globalScore;
-                    finalSelectedLib=selectedLib;
+                globalLibScore+=lib.score;
 
-                }
 
             }
 
-            //System.out.println(m+" Global score"+globalScore);
+
+
+            if(maxScore<globalLibScore){
+                maxScore=globalLibScore;
+                finalSelectedLib=deepCopy(selectedLib);
+
+
+            }
+
         }
-        //System.out.println(globalScore);
 
 
     }
+
+    public static List<Library> deepCopy(List<Library> list) throws CloneNotSupportedException {
+        List<Library> clone = new ArrayList<Library>(list.size());
+        for (Library item : list) clone.add((Library) item.clone());
+        return clone;
+    }
+
 
 
     public static List<List<Library>> getAllPermuationLib(List<Library> original ){
@@ -134,7 +150,7 @@ public class Main {
             }else{
                 for(int j=0;j<noBook;j++){
 
-                    score.add(scanner.nextInt());
+                    scores.add(scanner.nextInt());
                 }
 
                 for(int j=0;j<noLib;j++){
@@ -147,7 +163,8 @@ public class Main {
                         for(int k=0; k<library.noOfBook;k++){
                             Book book=new Book();
                             book.id=scanner.nextInt();
-                            book.score=score.get(book.id);
+                            book.score=scores.get(book.id);
+                            library.bookTotalscore+=book.score;
                             library.books.add(book);
                         }
                     Collections.sort(library.books);
@@ -164,7 +181,6 @@ public class Main {
 
         }
 
-       //System.out.println();
 
 
 
