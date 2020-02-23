@@ -13,11 +13,19 @@ public class Main {
     static List<Library> libraries= new ArrayList<>();
     static List<Library> selectedLib=new ArrayList<>();
 
-    public static int OPTIMISE_PARAM=1000;
+    public static long OPTIMISE_PARAM=10000000L;
+            ;
     static List<Library> finalSelectedLib=new ArrayList<>();
     static int maxScore=0;
-    public static String fileName= "d_tough_choices"; //"a_example"; "b_read_on"; "c_incunabula" "e_so_many_books"; "d_tough_choices" ,,,; "f_libraries_of_the_world"
+    public static String fileName= "c_incunabula"; //"a_example"; "b_read_on"; "c_incunabula" "e_so_many_books"; "d_tough_choices" ,,,; "f_libraries_of_the_world"
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
+
+        if(args.length>0&& args[0]!=null){
+            fileName=args[0];
+        }
+        if(args.length>1&&args[1]!=null){
+            OPTIMISE_PARAM=Long.parseLong(args[1]);
+        }
         input();
         calculate();
         output();
@@ -45,7 +53,7 @@ public class Main {
         int remainLibDays=noDays;
 
         //Todo : need to optimise library order
-        for(int m=0;m< OPTIMISE_PARAM;m++) {
+        for(long m=0;m< OPTIMISE_PARAM;m++) {
             selectedLib=new ArrayList<>();
             globalLibScore=0;
             remainLibDays=noDays;
@@ -74,10 +82,12 @@ public class Main {
                         Book book = lib.books.get(k);
                         if (scannedReady.contains(book.id)) {
                             continue;
+                        }else{
+                            lib.scannedBooks.add(book);
+                            lib.score += book.score;
+                            scannedReady.add(book.id);
                         }
-                        lib.scannedBooks.add(book);
-                        lib.score += book.score;
-                        scannedReady.add(book.id);
+
                         i++;
                     }
                     if(lib.scannedBooks.size()>0){
