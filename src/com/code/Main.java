@@ -13,11 +13,11 @@ public class Main {
     static List<Library> libraries= new ArrayList<>();
     static List<Library> selectedLib=new ArrayList<>();
 
-    public static long OPTIMISE_PARAM=10000000L;
+    public static long OPTIMISE_PARAM=10L;
             ;
     static List<Library> finalSelectedLib=new ArrayList<>();
     static int maxScore=0;
-    public static String fileName= "c_incunabula"; //"a_example"; "b_read_on"; "c_incunabula" "e_so_many_books"; "d_tough_choices" ,,,; "f_libraries_of_the_world"
+    public static String fileName= "d_tough_choices"; //"a_example"; "b_read_on"; "c_incunabula" "e_so_many_books"; "d_tough_choices" ,,,; "f_libraries_of_the_world"
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
 
         if(args.length>0&& args[0]!=null){

@@ -11,12 +11,11 @@ public class Library  implements Cloneable,Comparable<Library> {
     public Integer score;
     public Integer bookTotalscore=0;
     public List<Book> scannedBooks=new ArrayList<>();
-    public List<Book> finalScannedBooks=new ArrayList<>();
     public List<Book> books=new ArrayList<>();
 
     @Override
     public int compareTo(Library o) {
-        return ((Library) o).bookTotalscore -this.bookTotalscore ;
+        return ((Library) o).bookTotalscore/((Library) o).signDay -this.bookTotalscore/(this).signDay  ;
     }
 
     public Object clone() throws
